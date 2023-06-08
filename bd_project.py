@@ -178,6 +178,7 @@ def tela_livros(usuario):
         easteregg()
 
     btEaterEggs = Button(root, text="ツ", width=2, font=('Arial', 15), command=eateregg_1)
+    btEaterEggs.configure(bg="#C71585", fg="white", relief="raised")
     btEaterEggs.place(x=1,y=750)
 
 
