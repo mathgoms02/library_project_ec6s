@@ -4,14 +4,12 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
-from deznanota import easteregg
-from carrinho import tela_carrinho
-from PIL import ImageTk, Image
+from bd_project import tela_livros
 
 
 password = "microondas123@"
 
-def tela_livros(usuario):
+def tela_home(usuario):
     # Conexão com o banco de dados
     username = usuario
     def create_server_connection(host_name, user_name, user_password, database):
@@ -32,7 +30,7 @@ def tela_livros(usuario):
     cursor = conn.cursor()
 
     # Obtendo dados da tabela
-    cursor.execute("SELECT * FROM livros_disponiveis")
+    cursor.execute("SELECT * FROM livros_usuarios")
     rows = cursor.fetchall()
 
     # Criando a janela principal
@@ -47,7 +45,7 @@ def tela_livros(usuario):
     library_name = Label(root, bg='#FFFACD', text='LITERAPICE', fg='#000000', font=('Montserrat', 15, 'bold'))
     library_name.pack()
 
-    text_id = Label(root, bg='#FFFACD', text='Livros disponíveis:', fg='#000000', font=('Montserrat', 15, 'bold'))
+    text_id = Label(root, bg='#FFFACD', text='Bem vindo ' + username, fg='#000000', font=('Montserrat', 15, 'bold'))
     text_id.pack()
 
     # Criando estilo para a tabela
@@ -101,80 +99,15 @@ def tela_livros(usuario):
 
         conn2.close()
 
-    # Botão Carrinho
-    def to_carrinho():
-        tela_carrinho(username)
-
-    #Obter id usuario
-    # def id_usuario(idUser):
-    #     idUsuario = idUser
-    #     conn = create_server_connection("localhost", "root", password, "biblioteca")
-    #     cursor = conn.cursor()
-    #     cursor.execute("SELECT * FROM usuarios WHERE nomeUsuario=%s")
-    def id_usuario(username):
-        conn4 = create_server_connection("localhost", "root", password, "biblioteca")
-        cursor4 = conn4.cursor()
-
-        query4 = "SELECT idUsuario FROM usuarios WHERE nomeUsuario = %s"
-        cursor4.execute(query4, (username,))
-        resultado = cursor4.fetchone()
-
-        # Verificar se o usuário foi encontrado
-        if resultado:
-            idUsuario = resultado[0]
-        else:
-            messagebox.showinfo("Erro", "Usuário não encontrado")
-            idUsuario = None
-
-        # Fechar o cursor e a conexão com o banco de dados
-        cursor4.close()
-        conn4.close()
-
-        return idUsuario
-        
-    idUser = id_usuario(username)
-    print(idUser)
+    # Botão Loja
+    def to_loja():
+        tela_livros(username)
     
-
-    # Botão Adicionar no Carrinho
-    def add_carrinho():
-        try:
-            item_selecionado = tabela.selection()
-            if item_selecionado:
-                valores_selecionados = tabela.item(item_selecionado)["values"]
-                titulo = valores_selecionados[1]
-                autor = valores_selecionados[2]
-                ano = valores_selecionados[3]
-                genero = valores_selecionados[4]
-
-                preco = float(valores_selecionados[5])
-
-                unidades = int(caixa_texto2.get()) if caixa_texto2.get() else 1
-                total = unidades * preco
-
-                conn3 = create_server_connection("localhost", "root", password, "biblioteca")
-                cursor3 = conn3.cursor()
-
-                query = "INSERT INTO carrinho (idCarrinho_Usuario, titulo, autor, ano, genero, unidades, preco) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (idUser, titulo, autor, ano, genero, unidades, total)
-                cursor3.execute(query, values)
-                conn3.commit()
-
-                messagebox.showinfo("SUCESSO", "Adicionado com sucesso ao carrinho")
-
-        except Error as err:
-            messagebox.showinfo("Error", str(err))
-        finally:
-            if conn3.is_connected():
-                cursor3.close()
-                conn3.close()
-
-
     def restaurar_table():
         tabela.delete(*tabela.get_children())
         conn = create_server_connection("localhost", "root", password, "biblioteca")
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM livros_disponiveis")
+        cursor.execute("SELECT * FROM livros_usuarios")
         rows = cursor.fetchall()
         for i, (IdLivro, titulo, autor, ano, genero, preco) in enumerate(rows, start=1):
             tabela.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, preco))
@@ -199,29 +132,13 @@ def tela_livros(usuario):
     botaoPesquisar.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
     botaoPesquisar.pack(pady=10)
 
-    botaoAddCarrinho = Button(root, text="Adicionar ao Carrinho", width=20, font=('Montserrat', 12), command=add_carrinho)
-    botaoAddCarrinho.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
-    botaoAddCarrinho.pack(pady=10)
-
-    botaoCarrinho = Button(root, text="Carrinho", width=10, font=('Montserrat', 12), command=to_carrinho)
-    botaoCarrinho.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
-    botaoCarrinho.pack(pady=10)
-
-    def eateregg_1():
-        root.state(newstate='iconic')
-        easteregg()
-
-    btEaterEggs = Button(root, text="ツ", width=2, font=('Arial', 15), command=eateregg_1)
-    btEaterEggs.configure(bg="#C71585", fg="white", relief="raised")
-    btEaterEggs.place(x=1,y=750)
-
-
+    botaoLoja = Button(root, text="Loja", width=10, font=('Montserrat', 12), command=to_loja)
+    botaoLoja.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
+    botaoLoja.pack(pady=10)
 
     # Mostrando os dados na tabela
     for i, (IdLivro, titulo, autor, ano, genero, preco) in enumerate(rows, start=1):
         tabela.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, preco))
-        
-    # root.protocol("WM_DELETE_WINDOW", abrir)
-    
+
     conn.close()
     root.mainloop()

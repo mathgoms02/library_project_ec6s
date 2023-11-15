@@ -5,6 +5,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
 import cadastro
+# from bd_project import id_usuario
 
 def tela_carrinho(usuario):
     nomeUsuario = usuario
@@ -83,24 +84,25 @@ def tela_carrinho(usuario):
             conn4.close()
 
             return id_usuario
+        
 
-        cu = obter_id_usuario(nomeUsuario)
-        print(cu)
+
+        usuarioF = obter_id_usuario(nomeUsuario)
+        print(usuarioF)
 
 
         try:
-            cursor4.execute("SELECT * FROM livros_disponiveis")
+            cursor4.execute("SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
             carrinho_rows = cursor4.fetchall()
 
             for item in carrinho_rows:
                 IdLivro = item[0]
-            print(IdLivro)
-            # Inserir o item na tabela de compras
-            cursor4.execute("INSERT INTO livros_usuarios (fk_idLivro, fk_idUsuario) VALUES (%s, %s)",
-                               (IdLivro, cu))
-            
+                # Inserir o item na tabela de compras
+                cursor4.execute("INSERT INTO livros_usuarios (fk_idLivro, fk_idUsuario) VALUES (%s, %s)",
+                            (IdLivro, usuarioF))
+
             # Limpar a tabela carrinho
-            cursor4.execute("TRUNCATE TABLE carrinho")
+            cursor4.execute("DELETE FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
             conn4.commit()
 
             messagebox.showinfo("SUCESSO", "Itens adquiridos com sucesso!")
@@ -116,28 +118,53 @@ def tela_carrinho(usuario):
                 cursor4.close()
                 conn4.close()
 
-    password = "microondas123@"
-    conn = create_server_connection2("localhost", "root", password,"biblioteca")
-    cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM carrinho")
-    rows = cursor.fetchall()
+                
+    def obter_id_usuario2(username):
+        # Abrir a conexão com o banco de dados
+        password = "microondas123@"
+        conn9 = create_server_connection2("localhost", "root", password, "biblioteca")
+        cursor9 = conn9.cursor()
 
+        # Consulta SQL para obter o ID do usuário com base no nome
+        query9 = "SELECT idUsuario FROM usuarios WHERE nomeUsuario = %s"
+        cursor9.execute(query9, (username,))
+        resultado9 = cursor9.fetchone()
 
+        # Verificar se o usuário foi encontrado
+        if resultado9:
+            id_usuario9 = resultado9[0]
+        else:
+            messagebox.showinfo("Erro", "Usuário não encontrado")
+            id_usuario9 = None
 
+        # Fechar o cursor e a conexão com o banco de dados
+        cursor9.close()
+        conn9.close()
 
-
-
-
-
-
+        return id_usuario9
     
+    usuarioS = obter_id_usuario2(nomeUsuario)
+    print(usuarioS)
+
+
+
     password = "microondas123@"
     conn = create_server_connection2("localhost", "root", password,"biblioteca")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM carrinho")
+    # query = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
+    # cursor.execute(query, (usuarioS,))
+
+
+    # # queryCar = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
+    # rows = cursor.fetchall(query, (usuarioS,))
+
+
+    query = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
+    cursor.execute(query, (usuarioS,))
     rows = cursor.fetchall()
+
 
     #Criando janela carrinho
     car = tk.Tk()
@@ -147,6 +174,9 @@ def tela_carrinho(usuario):
 
     marginSup = Canvas(car, width=1920, bg='#A52A2A', height=15, bd=0, highlightthickness=0, relief='ridge')
     marginSup.pack()
+
+    library_name = Label(car, bg='#FFFACD', text='LITERAPICE:', fg='#000000', font=('Montserrat', 15, 'bold'))
+    library_name.pack()
 
     text_id = Label(car, bg='#FFFACD', text='Carrinho', fg='#000000', font=('Montserrat', 15, 'bold'))
     text_id.pack()
@@ -201,7 +231,7 @@ def tela_carrinho(usuario):
 
     # mostrar os dados à tabela
 
-    for i, (IdLivro, titulo, autor, ano, genero, unidades, preco) in enumerate(rows, start=1):
+    for i, (IdLivro, idCarrinhoUser, titulo, autor, ano, genero, unidades, preco) in enumerate(rows, start=1):
         total = int(unidades * preco)
         tabela_carrinho.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, unidades, preco, total))
 
