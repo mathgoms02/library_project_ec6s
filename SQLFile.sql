@@ -9,17 +9,25 @@ CREATE TABLE livros_disponiveis(
 
 create table carrinho(
 	idLivro int primary key auto_increment,
+    idCarrinho_Usuario int,
     titulo varchar(500),
     autor varchar(500),
     ano int,
     genero varchar(100),
     unidades int,
-    preco float
+    preco float,
+    foreign key(idCarrinho_Usuario) references usuarios(idUsuario)
 );
 
+alter table carrinho
+add foreign key(idLivro) references livros_disponiveis(idLivro);
+
+alter table carrinho
+add foreign key(idLivro_loja) references livros_disponiveis(idLivro);
 
 CREATE TABLE usuarios(
 	idUsuario int primary key auto_increment,
+    cpfCliente bigint unique,
     nomeUsuario varchar(200),
 	senhaUsuario varchar(200)
 );
@@ -30,6 +38,21 @@ CREATE TABLE livros_usuarios(
     foreign key(fk_idLivro) references livros_disponiveis(idLivro),
     foreign key(fk_idUsuario) references usuarios(idUsuario)
 );
+
+ALTER TABLE livros_usuarios
+MODIFY fk_idLivro INT, -- Altera o tipo de dado se necessário
+ADD CONSTRAINT fk_livro_loja
+FOREIGN KEY (fk_idLivro)
+REFERENCES carrinho(idLivro_loja);
+
+ALTER TABLE livros_usuarios
+MODIFY fk_idLivro INT,
+ADD CONSTRAINT fk_livro_loja
+FOREIGN KEY (fk_idLivro)
+REFERENCES carrinho(idLivro_loja);
+
+drop table livros_usuarios;
+
 insert into carrinho(titulo, autor, ano, genero, unidades, preco)
 values("Fahrenheit 451", "Ray Bradbury", 1953, "Ficção", 3, unidades*53.99);
 
@@ -73,4 +96,12 @@ SELECT ld.titulo, ld.autor, u.nomeUsuario
 FROM livros_disponiveis ld
 JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
 JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario;
+
+SELECT ld.titulo, ld.autor, u.nomeUsuario
+FROM livros_disponiveis ld
+JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario
+WHERE u.nomeUsuario = 'junin';
+
+
 

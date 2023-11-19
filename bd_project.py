@@ -38,7 +38,7 @@ def tela_livros(usuario):
     # Criando a janela principal
     root = tk.Tk()
     root.title('Biblioteca')
-    root.geometry('1920x1080')
+    root.state('zoomed')  # Abre maximizado
     root.configure(background='#FFFACD')
 
     marginSup = Canvas(root, width=1920, bg='#A52A2A', height=15, bd=0, highlightthickness=0, relief='ridge')
@@ -142,6 +142,7 @@ def tela_livros(usuario):
             item_selecionado = tabela.selection()
             if item_selecionado:
                 valores_selecionados = tabela.item(item_selecionado)["values"]
+                idLivro_loja = valores_selecionados[0]
                 titulo = valores_selecionados[1]
                 autor = valores_selecionados[2]
                 ano = valores_selecionados[3]
@@ -155,8 +156,8 @@ def tela_livros(usuario):
                 conn3 = create_server_connection("localhost", "root", password, "biblioteca")
                 cursor3 = conn3.cursor()
 
-                query = "INSERT INTO carrinho (idCarrinho_Usuario, titulo, autor, ano, genero, unidades, preco) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                values = (idUser, titulo, autor, ano, genero, unidades, total)
+                query = "INSERT INTO carrinho (idCarrinho_Usuario, idLivro_loja, titulo, autor, ano, genero, unidades, preco) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                values = (idUser, idLivro_loja, titulo, autor, ano, genero, unidades, total)
                 cursor3.execute(query, values)
                 conn3.commit()
 

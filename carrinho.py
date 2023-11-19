@@ -9,6 +9,8 @@ import cadastro
 
 def tela_carrinho(usuario):
     nomeUsuario = usuario
+    password = "microondas123@"
+    
     def create_server_connection2(host_name, user_name, user_password,database):
         connection = None
         try:
@@ -53,53 +55,80 @@ def tela_carrinho(usuario):
                 cursor3.close()
                 conn3.close()
 
-
-
-
-
-
-    def adquirir():
+    def obter_id_usuario(username):
+        # Abrir a conexão com o banco de dados
         conn4 = create_server_connection2("localhost", "root", password, "biblioteca")
         cursor4 = conn4.cursor()
 
-        def obter_id_usuario(username):
-            # Abrir a conexão com o banco de dados
-            conn4 = create_server_connection2("localhost", "root", password, "biblioteca")
-            cursor4 = conn4.cursor()
+        # Consulta SQL para obter o ID do usuário com base no nome
+        query = "SELECT idUsuario FROM usuarios WHERE nomeUsuario = %s"
+        cursor4.execute(query, (username,))
+        resultado = cursor4.fetchone()
 
-            # Consulta SQL para obter o ID do usuário com base no nome
-            query = "SELECT idUsuario FROM usuarios WHERE nomeUsuario = %s"
-            cursor4.execute(query, (username,))
-            resultado = cursor4.fetchone()
+        # Verificar se o usuário foi encontrado
+        if resultado:
+            id_usuario = resultado[0]
+        else:
+            messagebox.showinfo("Erro", "Usuário não encontrado")
+            id_usuario = None
 
-            # Verificar se o usuário foi encontrado
-            if resultado:
-                id_usuario = resultado[0]
-            else:
-                messagebox.showinfo("Erro", "Usuário não encontrado")
-                id_usuario = None
+        # Fechar o cursor e a conexão com o banco de dados
+        cursor4.close()
+        conn4.close()
 
-            # Fechar o cursor e a conexão com o banco de dados
-            cursor4.close()
-            conn4.close()
-
-            return id_usuario
-        
+        return id_usuario
+    
 
 
-        usuarioF = obter_id_usuario(nomeUsuario)
-        print(usuarioF)
+    usuarioF = obter_id_usuario(nomeUsuario)
 
+
+    def obter_id_livros(id_usuario):
+        # Abrir a conexão com o banco de dados
+        # password = "microondas123@"
+        conn = create_server_connection2("localhost", "root", password, "biblioteca")
+        cursor = conn.cursor()
+
+        # Consulta SQL para obter os idLivros no carrinho para um usuário específico
+        query = "SELECT idLivro_loja FROM carrinho WHERE idCarrinho_Usuario = %s"
+        cursor.execute(query, (id_usuario,))
+        resultados = cursor.fetchall()
+
+        # Verificar se há livros encontrados no carrinho
+        if resultados:
+            id_livros = [resultado[0] for resultado in resultados]
+        else:
+            messagebox.showinfo("Erro", "Nenhum livro encontrado no carrinho")
+            id_livros = []
+
+        # Fechar o cursor e a conexão com o banco de dados
+        cursor.close()
+        conn.close()
+
+        return id_livros
+    
+    # idlivros_loja = obter_id_livros(usuarioS)
+    # print(idLivros)
+
+
+    def adquirir():
+
+        conn4 = create_server_connection2("localhost", "root", password, "biblioteca")
+        cursor4 = conn4.cursor()
+        idlivros_loja = obter_id_livros(usuarioF)
 
         try:
             cursor4.execute("SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
             carrinho_rows = cursor4.fetchall()
-
+            
+            print(carrinho_rows)
+            
             for item in carrinho_rows:
-                IdLivro = item[0]
+                idlivros_loja = item[2]
                 # Inserir o item na tabela de compras
                 cursor4.execute("INSERT INTO livros_usuarios (fk_idLivro, fk_idUsuario) VALUES (%s, %s)",
-                            (IdLivro, usuarioF))
+                            (idlivros_loja, usuarioF))
+
 
             # Limpar a tabela carrinho
             cursor4.execute("DELETE FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
@@ -119,10 +148,12 @@ def tela_carrinho(usuario):
                 conn4.close()
 
 
+    
+
+
                 
     def obter_id_usuario2(username):
         # Abrir a conexão com o banco de dados
-        password = "microondas123@"
         conn9 = create_server_connection2("localhost", "root", password, "biblioteca")
         cursor9 = conn9.cursor()
 
@@ -149,7 +180,6 @@ def tela_carrinho(usuario):
 
 
 
-    password = "microondas123@"
     conn = create_server_connection2("localhost", "root", password,"biblioteca")
     cursor = conn.cursor()
 
@@ -168,8 +198,8 @@ def tela_carrinho(usuario):
 
     #Criando janela carrinho
     car = tk.Tk()
-    car.title('Carrinho')
-    car.geometry('1920x1080')
+    car.title('Biblioteca')
+    car.state('zoomed')  # Abre maximizado
     car.configure(background='#FFFACD')
 
     marginSup = Canvas(car, width=1920, bg='#A52A2A', height=15, bd=0, highlightthickness=0, relief='ridge')
@@ -229,9 +259,8 @@ def tela_carrinho(usuario):
     botaoAdd.place(x=750, y=378)
 
 
-    # mostrar os dados à tabela
 
-    for i, (IdLivro, idCarrinhoUser, titulo, autor, ano, genero, unidades, preco) in enumerate(rows, start=1):
+    for i, (IdLivro, idCarrinhoUser, idlivros_loja, titulo, autor, ano, genero, unidades, preco) in enumerate(rows, start=1):
         total = int(unidades * preco)
         tabela_carrinho.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, unidades, preco, total))
 
