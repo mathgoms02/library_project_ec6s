@@ -114,14 +114,13 @@ def tela_carrinho(usuario):
             cursor4.execute("SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
             carrinho_rows = cursor4.fetchall()
             
-            print(carrinho_rows)
+            #print(carrinho_rows)
             
             for item in carrinho_rows:
                 idlivros_loja = item[2]
                 # Inserir o item na tabela de compras
                 cursor4.execute("INSERT INTO livros_usuarios (fk_idLivro, fk_idUsuario) VALUES (%s, %s)",
                             (idlivros_loja, usuarioF))
-
 
             # Limpar a tabela carrinho
             cursor4.execute("DELETE FROM carrinho WHERE idCarrinho_Usuario=%s", (usuarioF,))
@@ -203,7 +202,7 @@ def tela_carrinho(usuario):
 
 
     tabela_carrinho = ttk.Treeview(car)
-    tabela_carrinho["columns"] = ("IdLivro", "titulo", "autor", "ano", "genero", "unidades", "total")
+    tabela_carrinho["columns"] = ("IdLivro", "titulo", "autor", "ano", "genero", "total")
 
     tabela_carrinho.column("#0", width=0, stretch=tk.NO) #coluna vazia (facilitar contagem)
     tabela_carrinho.column("IdLivro", width=80, anchor="center")
@@ -211,7 +210,6 @@ def tela_carrinho(usuario):
     tabela_carrinho.column("autor", width=150, anchor="w")
     tabela_carrinho.column("ano", width=80, anchor="center")
     tabela_carrinho.column("genero", width=100, anchor="w")
-    tabela_carrinho.column("unidades", width=80, anchor="center")
     tabela_carrinho.column("total", width=100, anchor="center")
 
     tabela_carrinho.heading("#0", text="", anchor=tk.W) #coluna vazia
@@ -220,7 +218,6 @@ def tela_carrinho(usuario):
     tabela_carrinho.heading("autor", text="Autor", anchor=tk.W)
     tabela_carrinho.heading("ano", text="Ano", anchor=tk.W)
     tabela_carrinho.heading("genero", text="Genero", anchor=tk.W)
-    tabela_carrinho.heading("unidades", text="Unidades", anchor=tk.W)
     tabela_carrinho.heading("total", text="Total", anchor=tk.W)
     #tabela_carrinho.place(x=10,y=50)
 
@@ -232,17 +229,17 @@ def tela_carrinho(usuario):
 
     botaoDel = Button(car, text="X", command=tirar_carrinho)
     botaoDel.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
-    botaoDel.place(x=700, y=378)
+    botaoDel.place(x=700, y=390)
 
     botaoAdd = Button(car, text="ADQUIRIR", command=adquirir)
     botaoAdd.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
-    botaoAdd.place(x=750, y=378)
+    botaoAdd.place(x=750, y=390)
 
 
 
-    for i, (IdLivro, idCarrinhoUser, idlivros_loja, titulo, autor, ano, genero, unidades, preco) in enumerate(rows, start=1):
-        total = int(unidades * preco)
-        tabela_carrinho.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, unidades, preco, total))
+    for i, (IdLivro, idCarrinhoUser, idlivros_loja, titulo, autor, ano, genero, preco) in enumerate(rows, start=1):
+        total = preco
+        tabela_carrinho.insert("", tk.END, text=str(i), values=(IdLivro, titulo, autor, ano, genero, preco, total))
 
     conn.close()
     car.mainloop()

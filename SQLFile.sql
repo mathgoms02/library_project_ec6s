@@ -103,5 +103,81 @@ JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
 JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario
 WHERE u.nomeUsuario = 'junin';
 
+SELECT ld.titulo, ld.autor, ld.preco, u.nomeUsuario
+FROM livros_disponiveis ld
+JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario
+WHERE ld.preco IS NOT NULL 
+  AND u.nomeUsuario = 'junin'; 
+
+-- SOMA
+SELECT
+    SUM(preco) AS total
+FROM
+    livros_disponiveis ld
+JOIN
+    livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+JOIN
+    usuarios u ON lu.fk_idUsuario = u.idUsuario
+WHERE
+    preco IS NOT NULL
+    AND u.nomeUsuario = 'junin';
+
+
+-- MÉDIA
+SELECT
+    AVG(preco) AS media
+FROM
+    livros_disponiveis ld
+JOIN
+    livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+JOIN
+    usuarios u ON lu.fk_idUsuario = u.idUsuario
+WHERE
+    preco IS NOT NULL
+    AND u.nomeUsuario = 'junin';
+
+-- MODA
+SELECT
+    (
+        SELECT preco
+        FROM livros_disponiveis ld
+        JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+        JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario
+        WHERE preco IS NOT NULL AND u.nomeUsuario = 'junin'
+        GROUP BY preco
+        ORDER BY COUNT(*) DESC, preco
+        LIMIT 1
+    ) AS moda;
+
+-- MEDIANA
+SELECT AVG(preco) AS mediana
+FROM (
+    SELECT preco
+    FROM (
+        SELECT preco,
+               ROW_NUMBER() OVER (ORDER BY preco) AS row_num,
+               COUNT(*) OVER () AS total_rows
+        FROM livros_disponiveis ld
+        JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+        JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario
+        WHERE preco IS NOT NULL AND u.nomeUsuario = 'junin'
+    ) AS ranked
+    WHERE row_num BETWEEN total_rows / 2 AND total_rows / 2 + 1
+) AS subquery;
+
+-- DESVIO PADRAO
+SELECT
+    STDDEV(preco) AS desvio_padrao
+FROM
+    livros_disponiveis ld
+JOIN
+    livros_usuarios lu ON ld.idLivro = lu.fk_idLivro
+JOIN
+    usuarios u ON lu.fk_idUsuario = u.idUsuario
+WHERE
+    preco IS NOT NULL
+    AND u.nomeUsuario = 'junin';
+
 
 

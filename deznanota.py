@@ -18,7 +18,7 @@ def easteregg():
 
     def accepted():
         messagebox. showinfo(
-            'DAAALEEE', 'Thanks alcinho, tamojunto')
+            'DAAALEEE', 'Thanks, tamojunto')
         
     def denied():
         move_button_1.destroy()

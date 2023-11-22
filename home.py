@@ -5,6 +5,7 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import messagebox
 from bd_project import tela_livros
+from estatistica import tela_estatistica
 
 password = "microondas123@"
 
@@ -80,6 +81,9 @@ def tela_home(usuario):
     def to_loja():
         tela_livros(username)
     
+    def to_estatistica():
+        tela_estatistica(username)
+    
     def restaurar_table():
         username = usuario
         tabela.delete(*tabela.get_children())
@@ -94,14 +98,13 @@ def tela_home(usuario):
     botaoClear = Button(root, text="↺", command=restaurar_table)
     botaoClear.pack(pady=10)
 
-    text3 = Label(root, bg='#FFFACD', text='Unidades:', fg='#000000', font=('Montserrat', 12, 'bold'))
-    text3.pack(pady=5)
-    caixa_texto2 = tk.Entry(root)
-    caixa_texto2.pack(pady=5)
-
     botaoLoja = Button(root, text="Loja", width=10, font=('Montserrat', 12), command=to_loja)
     botaoLoja.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
     botaoLoja.pack(pady=10)
+
+    btEstatistica = Button(root, text="%", width=2, font=('Arial', 15), command=to_estatistica)
+    btEstatistica.configure(bg="#C71585", fg="white", relief="raised")
+    btEstatistica.place(x=1,y=750)
 
     # Mostrando os dados na tabela
     for i, (titulo, autor, username) in enumerate(rows, start=1):

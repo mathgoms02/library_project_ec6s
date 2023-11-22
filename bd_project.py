@@ -6,7 +6,7 @@ from tkinter import *
 from tkinter import messagebox
 from deznanota import easteregg
 from carrinho import tela_carrinho
-from PIL import ImageTk, Image
+
 
 password = "microondas123@"
 
@@ -126,7 +126,6 @@ def tela_livros(usuario):
         return idUsuario
         
     idUser = id_usuario(username)
-    print(idUser)
     
 
     # Botão Adicionar no Carrinho
@@ -143,14 +142,12 @@ def tela_livros(usuario):
 
                 preco = float(valores_selecionados[5])
 
-                unidades = int(caixa_texto2.get()) if caixa_texto2.get() else 1
-                total = unidades * preco
 
                 conn3 = create_server_connection("localhost", "root", password, "biblioteca")
                 cursor3 = conn3.cursor()
 
-                query = "INSERT INTO carrinho (idCarrinho_Usuario, idLivro_loja, titulo, autor, ano, genero, unidades, preco) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                values = (idUser, idLivro_loja, titulo, autor, ano, genero, unidades, total)
+                query = "INSERT INTO carrinho (idCarrinho_Usuario, idLivro_loja, titulo, autor, ano, genero, preco) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                values = (idUser, idLivro_loja, titulo, autor, ano, genero, preco)
                 cursor3.execute(query, values)
                 conn3.commit()
 
@@ -182,11 +179,6 @@ def tela_livros(usuario):
 
     botaoClear = Button(root, text="↺", command=restaurar_table)
     botaoClear.pack(pady=10)
-
-    text3 = Label(root, bg='#FFFACD', text='Unidades:', fg='#000000', font=('Montserrat', 12, 'bold'))
-    text3.pack(pady=5)
-    caixa_texto2 = tk.Entry(root)
-    caixa_texto2.pack(pady=5)
 
     # Botões
     botaoPesquisar = Button(root, text="Pesquisar", width=15, font=('Montserrat', 12), command=botao_pesquisar)

@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import Tk
 from tkinter import messagebox
 from home import tela_home
+import hashlib
 
 
 def valida_cpf(cpf):
@@ -107,6 +108,9 @@ def tela_login():
             e_senha.delete(0, tk.END)
             e_cpf.delete(0, tk.END)
             e_nick.delete(0, tk.END)
+
+            # Criptografar a senha usando SHA-256
+            senha_criptografada = hashlib.sha256(nova_password.encode()).hexdigest()
             
             # Conectar ao banco de dados
             conn = mysql.connector.connect(
@@ -128,7 +132,7 @@ def tela_login():
             else:
                 # Inserir o usuário no banco de dados
                 query = "INSERT INTO usuarios (cpfUsuario, nomeUsuario, senhaUsuario, nickname) VALUES (%s, %s, %s, %s)"
-                valores = (novo_cpf, novo_username, nova_password, novo_nickname)
+                valores = (novo_cpf, novo_username, senha_criptografada, novo_nickname)
                 cursor.execute(query, valores)
 
                 # Efetivar a transação
@@ -190,6 +194,9 @@ def tela_login():
         # Realizar a consulta para verificar se o usuário existe
         username = e_nome.get()
         password = e_senha.get()
+
+        # Criptografar a senha usando SHA-256
+        senha_criptografada = hashlib.sha256(password.encode()).hexdigest()
         
         # Limpar os campos de entrada
         e_nome.delete(0, tk.END)
@@ -205,7 +212,7 @@ def tela_login():
         cursor = conn.cursor()
         
         query = "SELECT * FROM usuarios WHERE nomeUsuario=%s AND senhaUsuario=%s"
-        cursor.execute(query, (username, password))
+        cursor.execute(query, (username, senha_criptografada))
         resultado = cursor.fetchone()
         
         if resultado:
@@ -229,6 +236,9 @@ def tela_login():
             username = e_username.get()
             nova_senha = e_nova_senha.get()
 
+            # Criptografar a senha usando SHA-256
+            senha_criptografada = hashlib.sha256(nova_senha.encode()).hexdigest()
+
             # Conectar ao banco de dados
             conn = mysql.connector.connect(
                 host='localhost',
@@ -246,7 +256,7 @@ def tela_login():
             if resultado:
                 # Atualizar a senha no banco de dados
                 query = "UPDATE usuarios SET senhaUsuario=%s WHERE nomeUsuario=%s"
-                cursor.execute(query, (nova_senha, username))
+                cursor.execute(query, (senha_criptografada, username))
                 conn.commit()
                 messagebox.showinfo('Redefinir Senha', 'Senha redefinida com sucesso!')
                 tela_redef_senha.destroy()  # Fechar a janela de redefinição de senha
@@ -324,46 +334,6 @@ def tela_login():
     b_confirmar.place(x=165, y=200)
 
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     tela_login.mainloop()
