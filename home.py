@@ -6,7 +6,6 @@ from tkinter import *
 from tkinter import messagebox
 from bd_project import tela_livros
 
-
 password = "microondas123@"
 
 def tela_home(usuario):
@@ -26,16 +25,6 @@ def tela_home(usuario):
         except Error as err:
             print(f"Error: '{err}'")
         return connection
-    
-    # def restaurar_table():
-    #     tabela.delete(*tabela.get_children())
-    #     conn = create_server_connection("localhost", "root", password, "biblioteca")
-    #     cursor2 = conn.cursor()
-    #     cursor2.execute("SELECT ld.titulo, ld.autor, u.nomeUsuario FROM livros_disponiveis ld JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario WHERE u.nomeUsuario =%s;", (username,))
-    #     rows2 = cursor2.fetchall()
-    #     for i, (titulo, autor) in enumerate(rows2, start=1):
-    #         tabela.insert("", tk.END, text=str(i), values=(titulo, autor))
-    #     # conn.close()
 
     conn = create_server_connection("localhost", "root", password, "biblioteca")
     cursor = conn.cursor()
@@ -43,7 +32,6 @@ def tela_home(usuario):
     # Obtendo dados da tabela
     cursor.execute("SELECT ld.titulo, ld.autor, u.nomeUsuario FROM livros_disponiveis ld JOIN livros_usuarios lu ON ld.idLivro = lu.fk_idLivro JOIN usuarios u ON lu.fk_idUsuario = u.idUsuario WHERE u.nomeUsuario =%s;", (username,))
     rows = cursor.fetchall()
-
 
     # Criando a janela principal
     root = tk.Tk()
@@ -88,22 +76,6 @@ def tela_home(usuario):
     # Posicionando a tabela
     tabela.pack(pady=20)
 
-    # # Botão Pesquisar
-    # def botao_pesquisar():
-    #     conn2 = create_server_connection("localhost", "root", password, "biblioteca")
-    #     cursor2 = conn2.cursor()
-
-    #     valor = caixa_texto1.get()
-    #     cursor2.execute("SELECT * FROM livros_ WHERE titulo LIKE %s", ('%' + valor + '%',))
-    #     resultados = cursor2.fetchall()
-
-    #     tabela.delete(*tabela.get_children())
-
-    #     for livro in resultados:
-    #         tabela.insert("", tk.END, values=livro)
-
-    #     conn2.close()
-
     # Botão Loja
     def to_loja():
         tela_livros(username)
@@ -119,12 +91,6 @@ def tela_home(usuario):
             tabela.insert("", tk.END, text=str(i), values=(titulo, autor, username))
         conn.close()
 
-    # Labels e Entradas de Texto
-    # text1 = Label(root, bg='#FFFACD', text='Pesquisar:', fg='#000000', font=('Montserrat', 12, 'bold'))
-    # text1.pack(pady=5)
-    # caixa_texto1 = tk.Entry(root)
-    # caixa_texto1.pack(pady=5)
-
     botaoClear = Button(root, text="↺", command=restaurar_table)
     botaoClear.pack(pady=10)
 
@@ -132,11 +98,6 @@ def tela_home(usuario):
     text3.pack(pady=5)
     caixa_texto2 = tk.Entry(root)
     caixa_texto2.pack(pady=5)
-
-    # # Botões
-    # botaoPesquisar = Button(root, text="Pesquisar", width=15, font=('Montserrat', 12), command=botao_pesquisar)
-    # botaoPesquisar.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")
-    # botaoPesquisar.pack(pady=10)
 
     botaoLoja = Button(root, text="Loja", width=10, font=('Montserrat', 12), command=to_loja)
     botaoLoja.configure(bg="#FFDAB9", fg="black", relief="raised", padx=10, pady=5, activebackground="#008B8B")

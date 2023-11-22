@@ -8,7 +8,6 @@ from deznanota import easteregg
 from carrinho import tela_carrinho
 from PIL import ImageTk, Image
 
-
 password = "microondas123@"
 
 def tela_livros(usuario):
@@ -105,12 +104,6 @@ def tela_livros(usuario):
     def to_carrinho():
         tela_carrinho(username)
 
-    #Obter id usuario
-    # def id_usuario(idUser):
-    #     idUsuario = idUser
-    #     conn = create_server_connection("localhost", "root", password, "biblioteca")
-    #     cursor = conn.cursor()
-    #     cursor.execute("SELECT * FROM usuarios WHERE nomeUsuario=%s")
     def id_usuario(username):
         conn4 = create_server_connection("localhost", "root", password, "biblioteca")
         cursor4 = conn4.cursor()
@@ -215,8 +208,6 @@ def tela_livros(usuario):
     btEaterEggs = Button(root, text="ツ", width=2, font=('Arial', 15), command=eateregg_1)
     btEaterEggs.configure(bg="#C71585", fg="white", relief="raised")
     btEaterEggs.place(x=1,y=750)
-
-
 
     # Mostrando os dados na tabela
     for i, (IdLivro, titulo, autor, ano, genero, preco) in enumerate(rows, start=1):

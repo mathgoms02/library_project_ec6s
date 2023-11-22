@@ -78,10 +78,7 @@ def tela_carrinho(usuario):
 
         return id_usuario
     
-
-
     usuarioF = obter_id_usuario(nomeUsuario)
-
 
     def obter_id_livros(id_usuario):
         # Abrir a conexão com o banco de dados
@@ -107,10 +104,6 @@ def tela_carrinho(usuario):
 
         return id_livros
     
-    # idlivros_loja = obter_id_livros(usuarioS)
-    # print(idLivros)
-
-
     def adquirir():
 
         conn4 = create_server_connection2("localhost", "root", password, "biblioteca")
@@ -147,11 +140,6 @@ def tela_carrinho(usuario):
                 cursor4.close()
                 conn4.close()
 
-
-    
-
-
-                
     def obter_id_usuario2(username):
         # Abrir a conexão com o banco de dados
         conn9 = create_server_connection2("localhost", "root", password, "biblioteca")
@@ -182,14 +170,6 @@ def tela_carrinho(usuario):
 
     conn = create_server_connection2("localhost", "root", password,"biblioteca")
     cursor = conn.cursor()
-
-    # query = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
-    # cursor.execute(query, (usuarioS,))
-
-
-    # # queryCar = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
-    # rows = cursor.fetchall(query, (usuarioS,))
-
 
     query = "SELECT * FROM carrinho WHERE idCarrinho_Usuario=%s"
     cursor.execute(query, (usuarioS,))
