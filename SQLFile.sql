@@ -39,6 +39,8 @@ CREATE TABLE livros_usuarios(
     foreign key(fk_idUsuario) references usuarios(idUsuario)
 );
 
+DROP TABLE livros_usuarios;
+
 ALTER TABLE livros_usuarios
 MODIFY fk_idLivro INT, -- Altera o tipo de dado se necessário
 ADD CONSTRAINT fk_livro_loja
